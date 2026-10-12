@@ -8,6 +8,7 @@ import { Header } from './components/common/Header';
 import { Footer } from './components/common/Footer';
 import { Sidebar } from './components/common/Sidebar';
 import { ProtectedRoute } from './components/common/ProtectedRoute';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 
 // Public Pages
 import { Home } from './pages/public/Home';
@@ -36,7 +37,6 @@ import { CandidateSearch } from './pages/recruiter/CandidateSearch';
 // Admin Pages
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { RecruiterManagement } from './pages/admin/RecruiterManagement';
-import { AddRecruiter } from './pages/admin/AddRecruiter';
 import { UserManagement } from './pages/admin/UserManagement';
 import { JobManagement } from './pages/admin/JobManagement';
 import { HiringOverview } from './pages/admin/HiringOverview';
@@ -75,7 +75,6 @@ const DashboardWrapper = ({ children }) => {
     if (path.includes('/recruiter/candidates')) return { title: 'Candidate Search', profile: '/recruiter/profile' };
     if (path.includes('/recruiter/profile')) return { title: 'Company Profile', profile: '/recruiter/profile' };
     if (path.includes('/admin/dashboard')) return { title: 'Platform Analytics', profile: '/admin/users' };
-    if (path.includes('/admin/recruiters/add')) return { title: 'Add Recruiter', profile: '/admin/users' };
     if (path.includes('/admin/recruiters')) return { title: 'Recruiters', profile: '/admin/users' };
     if (path.includes('/admin/users')) return { title: 'User Management', profile: '/admin/users' };
     if (path.includes('/admin/jobs')) return { title: 'All Job Postings', profile: '/admin/users' };
@@ -219,7 +218,7 @@ function AppRoutes() {
                 <Route
                   path="/recruiter/create-job"
                   element={
-                    <ProtectedRoute roles={['recruiter']}>
+                    <ProtectedRoute roles={['recruiter', 'admin']}>
                       <DashboardWrapper><CreateJob /></DashboardWrapper>
                     </ProtectedRoute>
                   }
@@ -227,7 +226,7 @@ function AppRoutes() {
                 <Route
                   path="/recruiter/jobs"
                   element={
-                    <ProtectedRoute roles={['recruiter']}>
+                    <ProtectedRoute roles={['recruiter', 'admin']}>
                       <DashboardWrapper><ManageJobs /></DashboardWrapper>
                     </ProtectedRoute>
                   }
@@ -235,7 +234,7 @@ function AppRoutes() {
                 <Route
                   path="/recruiter/jobs/:id/edit"
                   element={
-                    <ProtectedRoute roles={['recruiter']}>
+                    <ProtectedRoute roles={['recruiter', 'admin']}>
                       <DashboardWrapper><EditJob /></DashboardWrapper>
                     </ProtectedRoute>
                   }
@@ -271,14 +270,6 @@ function AppRoutes() {
                   element={
                     <ProtectedRoute roles={['admin']}>
                       <DashboardWrapper><RecruiterManagement /></DashboardWrapper>
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/recruiters/add"
-                  element={
-                    <ProtectedRoute roles={['admin']}>
-                      <DashboardWrapper><AddRecruiter /></DashboardWrapper>
                     </ProtectedRoute>
                   }
                 />
@@ -323,13 +314,15 @@ function AppRoutes() {
 
 export function App() {
   return (
-    <AuthProvider>
-      <ToastProvider>
-        <Router>
-          <AppRoutes />
-        </Router>
-      </ToastProvider>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <ToastProvider>
+          <Router>
+            <AppRoutes />
+          </Router>
+        </ToastProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 

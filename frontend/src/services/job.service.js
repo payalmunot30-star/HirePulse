@@ -11,6 +11,10 @@ export const jobService = {
     return response.data;
   },
 
+  async getJob(id) {
+    return this.getJobById(id);
+  },
+
   async getRecruiterJobs(params = {}) {
     const response = await api.get('/jobs/my-jobs/', { params });
     return response.data;
